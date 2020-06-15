@@ -12,7 +12,7 @@ This tutorial shows you how to register a worker with `zbctl` and use it in your
 `zbctl` is the command line tool that allows you to interact with a Zeebe Broker. Install `zbctl` via [npm](https://www.npmjs.com/package/zbctl):
 
 ```bash
-npm i zbctl
+npm i -g zbctl
 ```
 
 Print the version to make sure that `zbctl` was installed:
@@ -24,21 +24,46 @@ zbctl version
 In [Quick Start](./gettingstarted_quick-start.md) you've already created a cluster and a client. We'll also use these for this tutorial.
 
 ## Advanced Workflow
+Use [This workflow model](./assets/gettingstarted_quickstart_advanced.bpmn) for the tutorial or adjust your previous model as followed:
 
-[This workflow model](./assets/gettingstarted_quickstart_advanced.bpmn) is used for this tutorial. It contains a service task whose jobs are processed by the worker `test-worker`.
+If you click on the canvas and look at the properties panel you can set the process name and the process Id. Later the bpmn id is important to start an instance on your process. The name will appear in Operate. If you have not set a name, Operate will use the ID. It is recommened to change the ID to something readable.
+
+![processId](./assets/zeebe-modeler-advanced-process-id.png)
+
+For our advanced workflow we include a Service Task and a XOR Gateway. Select the Service Task and fill in the properties. The jobs from that task should be processe by the worker `test-worker`.
 
 ![workflow](./assets/zeebe-modeler-advanced.png)
 
-The worker will return a JSON object as a result, which is used to decide which path to take.
+The worker will return a JSON object as a result, which is used to decide which path to take. In order to use the result to route your process fill in the condition expression on the two sequence flows after the XOR gateway. Use the following expression for the "Pong" sequence flow: 
+```bash
+=return="Pong"
+```
+And for the Else Sequence flow:
+```bash
+=return!="Pong"
+```
 
-## Deploy workflow
+![sequenceflows](./assets/zeebe-modeler-advanced-sequence-flows.png)
 
-Navigate to the client section of the cluster details. Use the button `Show connection info` to display all needed export statements for environment variables (Windows users: you can also use the [described flags](https://www.npmjs.com/package/zbctl#usage) `--address`, `--clientId` and `--clientSecret`).
 
-Test the connection by printing out the topology:
+
+## Deploy workflow with zbctl
+
+Go back to your cloud account and select your created cluster. Navigate to the client section of the cluster details. Use the button `Show connection info` to display all needed export statements for environment variables. 
+
+Set the environment variables accordingly to your operation system. 
+
+OR use the [described flags](https://www.npmjs.com/package/zbctl#usage) `--address`, `--clientId` and `--clientSecret`). with the zbctl commands
+
+Test the connection by printing out the topology (after setting the enviroment variables):
 
 ```bash
 zbctl status
+```
+
+OR if you haven't set the environment variables use the following pattern: 
+```bash
+zbctl status --address xxxxx --clientId xxxxx --clientSecret xxxxx
 ```
 
 As a result, you should see:
@@ -54,7 +79,7 @@ Brokers:
     Partition 1 : Leader
 ```
 
-Now you can deploy the [workflow](./assets/gettingstarted_quickstart_advanced.bpmn).
+Now you can deploy the [workflow](./assets/gettingstarted_quickstart_advanced.bpmn). Navigate to the folder, where you saved your workflow. 
 
 ```bash
 zbctl deploy gettingstarted_quickstart_advanced.bpmn
@@ -80,7 +105,7 @@ Important here is the `bpmnProcessId`, which you'll need for creating a new inst
 
 ## Register a worker
 
-The workflow uses the worker `test-worker`. Register a new one by using the following command:
+The workflow uses the worker with the type `test-worker`. Register a new one by using the following command:
 
 ```bash
 zbctl create worker test-worker --handler "echo {\"return\":\"Pong\"}"
