@@ -53,7 +53,7 @@ Go back to your cloud account and select your created cluster. Navigate to the c
 
 Set the environment variables accordingly to your operation system. 
 
-OR use the [described flags](https://www.npmjs.com/package/zbctl#usage) `--address`, `--clientId` and `--clientSecret`). with the zbctl commands
+OR use the [described flags](https://www.npmjs.com/package/zbctl#usage) (`--address`, `--clientId` and `--clientSecret`). with the zbctl commands
 
 Test the connection by printing out the topology (after setting the enviroment variables):
 
