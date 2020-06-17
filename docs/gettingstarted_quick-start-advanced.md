@@ -24,17 +24,21 @@ zbctl version
 In [Quick Start](./gettingstarted_quick-start.md) you've already created a cluster and a client. We'll also use these for this tutorial.
 
 ## Advanced Workflow
-Use [This workflow model](./assets/gettingstarted_quickstart_advanced.bpmn) for the tutorial or adjust your previous model as followed:
+Use [This workflow model](./assets/gettingstarted_quickstart_advanced.bpmn) for the tutorial or adjust your previous model as follows:
 
-If you click on the canvas and look at the properties panel you can set the process name and the process Id. Later the bpmn id is important to start an instance on your process. The name will appear in Operate. If you have not set a name, Operate will use the ID. It is recommened to change the ID to something readable.
+Click on the canvas and look at the properties panel. Here you can set the process name and the process ID - We highly recommened changing the process ID to something easily readable. 
+The process ID is necessary to start an instance on your process and the process name will appear in Operate. If you have not set a name, Operate will use the ID.
 
 ![processId](./assets/zeebe-modeler-advanced-process-id.png)
 
-For our advanced workflow we include a Service Task and a XOR Gateway. Select the Service Task and fill in the properties. The jobs from that task should be processe by the worker `test-worker`.
+For our advanced workflow we include a Service Task and an XOR Gateway. Select the Service Task and fill in the properties. The jobs from that task should be processed by the worker `test-worker`.
 
 ![workflow](./assets/zeebe-modeler-advanced.png)
 
-The worker will return a JSON object as a result, which is used to decide which path to take. In order to use the result to route your process fill in the condition expression on the two sequence flows after the XOR gateway. Use the following expression for the "Pong" sequence flow: 
+The worker will return a JSON object as a result, which is used to decide which path to take. 
+Now, we can use the JSON object to route your process by filling in the condition expression on the two sequence flows after the XOR gateway. 
+
+Use the following expression for the "Pong" sequence flow: 
 ```bash
 =return="Pong"
 ```
@@ -49,7 +53,7 @@ And for the Else Sequence flow:
 
 ## Deploy workflow with zbctl
 
-Go back to your cloud account and select your created cluster. Navigate to the client section of the cluster details. Use the button `Show connection info` to display all needed export statements for environment variables. 
+Go back to your cloud account and select your created cluster. Navigate to the client section of the cluster details. Use the button `Show connection info` to display all required export statements for environment variables. 
 
 Set the environment variables accordingly to your operation system. 
 
@@ -113,7 +117,7 @@ zbctl create worker test-worker --handler "echo {\"return\":\"Pong\"}"
 
 ## Start a new instance
 
-Starting a new instance is done with a single command:
+You can start a new instance with a single command:
 
 ```bash
 zbctl create instance camunda-cloud-quick-start-advanced
@@ -150,7 +154,7 @@ Changing the worker to
 zbctl create worker test-worker --handler "echo {\"return\":\"...\"}"
 ```
 
-and creating a new instance leads to a second instance in Operate ending in the second end event:
+and creating a new instance leads to a second instance in Operate, which you'll see ending in the second end event:
 
 ![operate-instance](assets/operate-advanced-instances-other.png)
 
